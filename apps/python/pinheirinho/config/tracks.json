@@ -1,0 +1,23 @@
+{
+    "drag_strip_kunos": {
+        "name": "Kunos Drag Strip (1000m)",
+        "left_lane": {
+            "pre_stage": {"center": [-12.5, 0.0, 10.0], "width": 4.0},
+            "stage": {"center": [-12.5, 0.0, 10.3], "width": 4.0},
+            "finish": {"center": [-12.5, 0.0, 412.3], "width": 4.0}
+        },
+        "right_lane": {
+            "pre_stage": {"center": [-8.5, 0.0, 10.0], "width": 4.0},
+            "stage": {"center": [-8.5, 0.0, 10.3], "width": 4.0},
+            "finish": {"center": [-8.5, 0.0, 412.3], "width": 4.0}
+        }
+    },
+    "default": {
+        "comment": "Template for new tracks. Coordinates are X, Y, Z.",
+        "left_lane": {
+            "pre_stage": {"center": [0, 0, 0], "width": 0},
+            "stage": {"center": [0, 0, 0.3], "width": 0},
+            "finish": {"center": [0, 0, 402], "width": 0}
+        }
+    }
+}
