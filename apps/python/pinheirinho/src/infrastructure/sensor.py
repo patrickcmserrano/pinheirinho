@@ -7,9 +7,23 @@ from src.utils.math_utils import is_point_in_cylinder, vec_dist_sq
 class SensorSystem:
     def __init__(self, track_json_path):
         self.track_data = self._load_config(track_json_path)
-        # Default to kunos drag strip for now, or detect track name from AC
-        self.current_track = self.track_data.get("drag_strip_kunos")
-        self.sensor_radius = 0.5 # 50cm tolerance?
+        self.current_track = self._determine_track()
+        self.sensor_radius = 0.5 # 50cm tolerance
+
+    def _determine_track(self):
+        try:
+            track_name = ac.getTrackName(0)
+            ac.console("Pinheirinho: Detected Track Name: '{}'".format(track_name))
+            if track_name in self.track_data:
+                ac.console("Pinheirinho: Loaded config for track '{}'".format(track_name))
+                return self.track_data[track_name]
+            else:
+                 ac.console("Pinheirinho: Track '{}' not found in config. Using fallback.".format(track_name))
+        except Exception as e:
+            ac.console("Pinheirinho: Track detection error: {}".format(e))
+        
+        ac.console("Pinheirinho: Defaulting to 'bdl_londrina_drag'.")
+        return self.track_data.get("bdl_londrina_drag", self.track_data.get("drag_strip_kunos"))
         
     def _load_config(self, path):
         try:

@@ -24,9 +24,10 @@ try:
     from src.infrastructure.sensor import SensorSystem
     from src.infrastructure.lighting import LightingSystem
     from src.infrastructure.auditor import AuditorSystem
+    from src.utils.logger import Logger
 except Exception as e:
     ac.log("Pinheirinho Init Error: {}".format(e))
-    ac.console("Pinheirinho Error: Check log")
+    ac.console("Pinheirinho Init Error: {}".format(e))
 
 # Global Mutable App State (The Shell)
 class AppState:
@@ -65,11 +66,11 @@ def acMain(ac_version):
         APP.auditor_system.log_dir = os.path.join(base_path, 'logs')
         APP.auditor_system._ensure_log_dir()
         
-        ac.console("Pinheirinho: Ready. Waiting for cars.")
+        Logger.info("Pinheirinho: Ready. Waiting for cars.")
         
         return app_name
     except Exception as e:
-        ac.log("Pinheirinho acMain Error: {}".format(e))
+        Logger.error("Pinheirinho acMain Error: {}".format(e))
         return "Pinheirinho Error"
 
 def acUpdate(delta_t):
@@ -110,8 +111,23 @@ def acUpdate(delta_t):
         APP.auditor_system.on_state_change(APP.race_state, new_state)
 
         # UI Validation
-        ac.setText(APP.lbl_status, "State: {}\nL: PRE={} STG={}".format(
-            new_state.status, l_pre, l_stg))
+        # Detailed Debug Info
+        debug_text = "Track: {}\n".format(ac.getTrackName(0))
+        debug_text += "State: {}\n".format(new_state.status)
+        debug_text += "Pos: X={:.2f} Y={:.2f} Z={:.2f}\n".format(car_pos[0], car_pos[1], car_pos[2])
+        debug_text += "L_Lane: PRE={} STG={} SPD={:.1f}\n".format(l_pre, l_stg, speed)
+        debug_text += "R_Lane: PRE={} STG={} (MOCKED)\n".format(r_pre, r_stg)
+        
+        # Light Status (Debug)
+        l = new_state.lights
+        debug_text += "Lights: P_L={} S_L={} G={} R={}".format(
+            1 if l.pre_stage_left else 0,
+            1 if l.stage_left else 0,
+            1 if l.green_left else 0,
+            1 if l.red_left else 0
+        )
+        
+        ac.setText(APP.lbl_status, debug_text)
             
         APP.race_state = new_state
         
